@@ -3,6 +3,7 @@ def getBranchType(branchName, tagName) {
     def qaPatterns = ".*qa/.*"
     def releasePattern = ".*release/.*"
     def productionPattern = "v.*"
+    def prPattern = "PR-.*"
 
     if (tagName =~ productionPattern) {
         return "PRODUCTION"
@@ -12,6 +13,8 @@ def getBranchType(branchName, tagName) {
         return "QA"
     } else if (branchName =~ releasePattern) {
         return "STAGE"
+    } else if (branchName =~ prPattern) {
+        return "PR"
     } else {
         return null;
     }
@@ -32,6 +35,9 @@ node {
         if (branchType == 'DEV') {
             version = "${env.BUILD_NUMBER}"
             tag = 'develop-v' + "${env.BUILD_NUMBER}"
+        } else if (branchType == 'PR') {
+            version = "${env.BUILD_NUMBER}"
+            tag = "pr-${env.CHANGE_ID}-v${env.BUILD_NUMBER}"
         } else if (branchType == 'QA') {
             version = ("${env.BRANCH_NAME}"=~/^(qa)\/(\d+\.\d+)/)[0][2]
             tag = 'qa-v' + version + ".${env.BUILD_NUMBER}"
@@ -45,6 +51,7 @@ node {
         
         echo "Current Branch Type is ${branchType}"
         echo "Current Version is ${version}"
+        echo "Current Tag is ${tag}"
     }
     
     stage('Build'){
