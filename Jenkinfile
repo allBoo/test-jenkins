@@ -3,7 +3,7 @@ def getBranchType(branchName, tagName) {
     def qaPatterns = ".*qa/.*"
     def releasePattern = ".*release/.*"
     def productionPattern = "v.*"
-    def prPattern = "v.*"
+    def prPattern = "PR-.*"
 
     if (tagName =~ productionPattern) {
         return "PRODUCTION"
