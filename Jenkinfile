@@ -1,5 +1,5 @@
 def getBranchType(branchName, tagName) {
-    def devPattern = ".*develop"
+    def devPattern = ".*master"
     def qaPatterns = ".*qa/.*"
     def releasePattern = ".*release/.*"
     def productionPattern = "v.*"
@@ -53,4 +53,15 @@ node {
             println i
         }
     }
+    
+    if (branchType == 'DEV') {
+        stage('Test'){
+            echo "Run tests"
+        }
+    }
+    
+    stage('Deploy') {
+        echo "Run deploy"
+    }
+    
 }
