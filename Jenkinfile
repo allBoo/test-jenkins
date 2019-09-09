@@ -1,6 +1,32 @@
+def getBranchType(branchName, tagName) {
+    def devPattern = ".*develop"
+    def qaPatterns = ".*qa/.*"
+    def releasePattern = ".*release/.*"
+
+    if (tagName) {
+        return "PRODUCTION"
+    } else if (branchName =~ devPattern) {
+        return "DEV"
+    } else if (branchName =~ qaPatterns) {
+        return "QA"
+    } else if (branchName =~ releasePattern) {
+        return "STAGE"
+    } else {
+        return null;
+    }
+}
+
+
 node {
+    def branchType
+    
     stage('Clone repo'){
         checkout scm
+    }
+    
+    stage('Determine tag'){
+        branchType = getBranchType("${env.BRANCH_NAME}", "${env.TAG_NAME}")
+        echo "Current Branch Type ${branchType}"
     }
     
     stage('Build'){
