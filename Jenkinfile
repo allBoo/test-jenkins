@@ -2,8 +2,9 @@ def getBranchType(branchName, tagName) {
     def devPattern = ".*develop"
     def qaPatterns = ".*qa/.*"
     def releasePattern = ".*release/.*"
+    def productionPattern = "v.*"
 
-    if (tagName) {
+    if (tagName =~ productionPattern) {
         return "PRODUCTION"
     } else if (branchName =~ devPattern) {
         return "DEV"
@@ -19,14 +20,31 @@ def getBranchType(branchName, tagName) {
 
 node {
     def branchType
+    def version
     
     stage('Clone repo'){
         checkout scm
     }
     
     stage('Determine tag'){
-        branchType = getBranchType("${env.BRANCH_NAME}", "${env.TAG_NAME}")
-        echo "Current Branch Type ${branchType}"
+        branchType = getBranchType(env.BRANCH_NAME, env.TAG_NAME)
+        
+        if (branchType == 'DEV') {
+            version = "${env.BUILD_NUMBER}"
+            tag = 'develop-v' + "${env.BUILD_NUMBER}"
+        } else if (branchType == 'QA') {
+            version = ("${env.BRANCH_NAME}"=~/^(qa)\/(\d+\.\d+)/)[0][2]
+            tag = 'qa-v' + version + ".${env.BUILD_NUMBER}"
+        } else if (branchType == 'STAGE') {
+            version = ("${env.BRANCH_NAME}"=~/^(release)\/(\d+\.\d+)/)[0][2]
+            tag = 'release-v' + version
+        } else if (branchType == 'PRODUCTION') {
+            version = ("${env.TAG_NAME}"=~/^(v)(\d+\.\d+)/)[0][2]
+            tag = 'release-v' + version
+        }
+        
+        echo "Current Branch Type is ${branchType}"
+        echo "Current Version is ${version}"
     }
     
     stage('Build'){
