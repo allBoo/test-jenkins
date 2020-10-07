@@ -43,8 +43,11 @@ node {
             tag = 'release-v' + version
         }
         
+        channel = credentials('jenkins-release-updates')
+        
         echo "Current Branch Type is ${branchType}"
         echo "Current Version is ${version}"
+        echo "Current Channel is ${channel}"
     }
     
     stage('Build'){
