@@ -49,7 +49,7 @@ node {
         echo "Current Version is ${version}"
         echo "Current Channel is ${channel}"
         withCredentials([string(credentialsId: channel, variable: 'TEAMS_CHANNEL')]) {
-            office365ConnectorSend message: 'TEST', status: 'STARTED', webhookUrl: $TEAMS_CHANNEL
+            office365ConnectorSend message: 'TEST', status: 'STARTED', webhookUrl: '$TEAMS_CHANNEL'
         }
     }
     
