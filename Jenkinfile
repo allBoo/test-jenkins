@@ -43,11 +43,12 @@ node {
             tag = 'release-v' + version
         }
         
-        channel = credentials('jenkins-release-updates')
+        channel = credentials('jenkins-release-alerts')
         
         echo "Current Branch Type is ${branchType}"
         echo "Current Version is ${version}"
         echo "Current Channel is ${channel}"
+        office365ConnectorSend message: 'TEST', status: 'STARTED', webhookUrl: $channel
     }
     
     stage('Build'){
