@@ -48,9 +48,9 @@ node {
         echo "Current Branch Type is ${branchType}"
         echo "Current Version is ${version}"
         echo "Current Channel is ${channel}"
-        withCredentials([string(credentialsId: channel, variable: 'TEAMS_CHANNEL')]) {
-            echo '$TEAMS_CHANNEL'
-            office365ConnectorSend message: 'TEST', status: 'STARTED', webhookUrl: '$TEAMS_CHANNEL'
+        withCredentials(bindings: [string(credentialsId: channel, variable: 'HOOK_URL')]) {
+            echo "${HOOK_URL}"
+            office365ConnectorSend message: 'TEST', status: 'STARTED', webhookUrl: "${HOOK_URL}"
         }
     }
     
